@@ -16,14 +16,14 @@
 
 - name: Setting vars for bstion.ks file creation
   set_fact:
+    install_config_vars:
+        control:
+          architecture: "s390x"
     env:
       language: "{{ hcp.bastion_params.language }}"
       timezone: "{{ hcp.bastion_params.timezone }}"
       keyboard: "{{ hcp.bastion_params.keyboard }}"
       use_ipv6: False
-      install_config:
-        control:
-          architecture: "s390x"
       cluster:
         networking:
           base_domain: "{{ hcp.bastion_params.base_domain }}"
@@ -80,7 +80,7 @@
     --memory 4096 \
     --vcpus sockets=1,cores=4,threads=1 \
     --disk $disk_param  \
-    --os-variant "rhel{{hcp.bastion_params.os_variant}}" \
+    --osinfo detect=on,require=off \
     --network network:{{ hcp.bastion_params.network_name }} \
     --location '{{ env.file_server.protocol }}://{{ env.file_server.user + ':' + env.file_server.pass + '@' if env.file_server.protocol == 'ftp' else '' }}{{ env.file_server.ip }}{{ ':' + env.file_server.port if env.file_server.port | default('') | length > 0 else '' }}/{{ env.file_server.iso_mount_dir }}/' \
     --rng=/dev/urandom --initrd-inject /home/libvirt/bastion.ks \
